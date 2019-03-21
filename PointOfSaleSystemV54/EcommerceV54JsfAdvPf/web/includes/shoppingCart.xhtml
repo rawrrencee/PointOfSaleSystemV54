@@ -7,24 +7,33 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <p:commandButton update='shoppingCartSidebar' value="Cart" icon="fa fa-shopping-cart" oncomplete="PF('shoppingCartSidebar').show()"></p:commandButton>
-    <p:sidebar id="shoppingCartSidebar" widgetVar="shoppingCartSidebar" position="right" baseZIndex="50">
-        <h1 style="font-weight:normal">Shopping Cart</h1>
-
-        <p:panelGrid>
+    <p:sidebar id="shoppingCartSidebar" widgetVar="shoppingCartSidebar" position="right" baseZIndex="-1">
+        <h2 style="font-weight:normal">Shopping Cart</h2>
+        <p:panelGrid id="shoppingCartProducts">
             <p:row>
-                <p:repeat value="#{shoppingCartManagedBean.shoppingCartLineEntities}" var="shoppingCartLineEntity">
-                    <p:panelGrid columns="2" columnClasses="product, quantity">
-                        <p:outputPanel>
-                            <h:panelGrid columns="2" cellpadding="5">
-                                <h:outputText value="#{shoppingCartLineEntity.productEntity.name}"/>
-                                <br/>
-                                <h:outputText value="#{shoppingCartLineEntity.quantity}"/>
-                            </h:panelGrid>
-                        </p:outputPanel>
-                    </p:panelGrid>
-                </p:repeat>
+                <p:panelGrid id="allProducts" columns="3">
+                    <h:outputText value="Product"/>
+                    <h:outputText value="Quantity"/>
+                    <h:outputText value="Action"/>
+                    <p:repeat value="#{shoppingCartManagedBean.shoppingCartLineEntities}" var="shoppingCartLineEntity">
+                        <p:panelGrid columns="1">
+                            <h:outputText value="#{shoppingCartLineEntity.productEntity.name}"/>
+                        </p:panelGrid>
+                    </p:repeat>
+                    <p:repeat value="#{shoppingCartManagedBean.shoppingCartLineEntities}" var="shoppingCartLineEntity">
+                        <p:panelGrid columns="1">
+                            <h:outputText value="#{shoppingCartLineEntity.quantity}"/>
+                        </p:panelGrid>
+                    </p:repeat>
+                    <p:repeat value="#{shoppingCartManagedBean.shoppingCartLineEntities}" var="shoppingCartLineEntity">
+                        <p:commandButton icon="fa fa-shopping-cart" title="Remove from Cart" actionListener="#{shoppingCartManagedBean.removeProductFromShoppingCart}" update=":shoppingCartProducts:allProducts">
+                            <f:attribute name="productEntityToRemove" value="#{shoppingCartLineEntity.productEntity}" />
+                        </p:commandButton>
+                    </p:repeat>
+                </p:panelGrid>
             </p:row>
         </p:panelGrid>
-        <p:commandButton value="Hide" oncomplete="PF('shoppingCartSidebar').hide()"/>
+        <br/>
+        <p:commandButton value="Checkout" oncomplete="PF('shoppingCartSidebar').hide()"/>
     </p:sidebar>
 </ui:composition>

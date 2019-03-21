@@ -42,6 +42,7 @@ public class ShoppingCartManagedBean implements Serializable {
     private List<ShoppingCartLineEntity> shoppingCartLineEntities;
 
     private ProductEntity productEntityToAdd;
+    private ProductEntity productEntityToRemove;
 
     public ShoppingCartManagedBean() {
         shoppingCartEntity = new ShoppingCartEntity();
@@ -76,7 +77,7 @@ public class ShoppingCartManagedBean implements Serializable {
                 shoppingCartLineEntity.setQuantity(currentQty + 1);
                 containsProduct = true;
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product already added to cart, quantity increased", null));
-                break;
+                return;
             }
         }
         if (!containsProduct) {
@@ -84,6 +85,17 @@ public class ShoppingCartManagedBean implements Serializable {
             getShoppingCartEntity().getShoppingCartLineEntities().add(newShoppingCartLine);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product added to cart", null));
 
+        }
+    }
+
+    public void removeProductFromShoppingCart(ActionEvent event) {
+        productEntityToRemove = (ProductEntity) event.getComponent().getAttributes().get("productEntityToRemove");
+        for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
+            if (shoppingCartLineEntity.getProductEntity().equals(productEntityToRemove)) {
+                shoppingCartLineEntities.remove(shoppingCartLineEntity);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product removed from cart", null));
+                return;
+            }
         }
     }
 
