@@ -7,26 +7,27 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <section id="menu" class="menu">
-        <h:form>
+        <h:form id="menuBarForm">
             <p:growl id="messages"/>
 
-            <p:menubar rendered="#{sessionScope.isLogin == true}" style="border-style: none">
+            <p:menubar id="menuBar" rendered="#{sessionScope.isLogin == true}" style="border-style: none">
 
-                <p:menuitem value="Home" outcome="/index" icon="fa fa-home" />
+                <p:menuitem id="homeMenuItem" value="Home" outcome="/index" icon="fa fa-home" />
 
-                <p:submenu label="Products" icon="fa fa-th-list">
-                    <p:menuitem value="View All" icon="fa fa-plus" outcome="/productManagement.xhtml" />
+                <p:submenu id="productsMenuItem" label="Products" icon="fa fa-th-list">
+                    <p:menuitem id="viewAllProducts" value="View All" icon="fa fa-plus" outcome="/productManagement.xhtml" />
                 </p:submenu>
 
-                <f:facet name="options">
-                    <p:menuButton value="Logged in as: #{sessionScope.currentCustomerEntity.email}">
-                        <p:menuitem value="View Profile"/>
+                <f:facet id="menuBarOptions" name="options">
+                    <p:menuButton id="displayUserButton" value="Logged in as: #{sessionScope.currentCustomerEntity.email}">
+                        <p:menuitem id="viewUserProfileButton" value="View Profile"/>
                         <p:separator />
-                        <p:menuitem value="Logout" actionListener="#{customerManagedBean.logout}" icon="fa fa-sign-out" rendered="#{sessionScope.isLogin == true}"/>
-                    </p:menuButton> &nbsp;
-                    <ui:include src="/includes/shoppingCart.xhtml"/>
+                        <p:menuitem id="userLogoutButton" value="Logout" actionListener="#{customerManagedBean.logout}" icon="fa fa-sign-out" rendered="#{sessionScope.isLogin == true}"/>
+                    </p:menuButton> &nbsp;<ui:include src="/includes/shoppingCart.xhtml"/>
                 </f:facet>
             </p:menubar>
         </h:form>
+        
+
     </section>
 </ui:composition>

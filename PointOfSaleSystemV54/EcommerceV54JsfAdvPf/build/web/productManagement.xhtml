@@ -8,7 +8,7 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-        <div>
+        <h:panelGroup rendered="#{sessionScope.isLogin == true}">
             <h3>View Products</h3>
 
             <h:form id="formAllProducts">
@@ -73,7 +73,7 @@
 
 
 
-        </div>
+        </h:panelGroup>
     </ui:define>
 
 </ui:composition>

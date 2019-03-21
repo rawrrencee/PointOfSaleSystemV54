@@ -6,34 +6,28 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
 
-    <p:commandButton update='shoppingCartSidebar' value="Cart" icon="fa fa-shopping-cart" oncomplete="PF('shoppingCartSidebar').show()"></p:commandButton>
-    <p:sidebar id="shoppingCartSidebar" widgetVar="shoppingCartSidebar" position="right" baseZIndex="-1">
-        <h2 style="font-weight:normal">Shopping Cart</h2>
-        <p:panelGrid id="shoppingCartProducts">
-            <p:row>
-                <p:panelGrid id="allProducts" columns="3">
-                    <h:outputText value="Product"/>
-                    <h:outputText value="Quantity"/>
-                    <h:outputText value="Action"/>
-                    <p:repeat value="#{shoppingCartManagedBean.shoppingCartLineEntities}" var="shoppingCartLineEntity">
-                        <p:panelGrid columns="1">
-                            <h:outputText value="#{shoppingCartLineEntity.productEntity.name}"/>
-                        </p:panelGrid>
-                    </p:repeat>
-                    <p:repeat value="#{shoppingCartManagedBean.shoppingCartLineEntities}" var="shoppingCartLineEntity">
-                        <p:panelGrid columns="1">
-                            <h:outputText value="#{shoppingCartLineEntity.quantity}"/>
-                        </p:panelGrid>
-                    </p:repeat>
-                    <p:repeat value="#{shoppingCartManagedBean.shoppingCartLineEntities}" var="shoppingCartLineEntity">
-                        <p:commandButton icon="fa fa-shopping-cart" title="Remove from Cart" actionListener="#{shoppingCartManagedBean.removeProductFromShoppingCart}" update=":shoppingCartProducts:allProducts">
+        <p:commandButton update='shoppingCartSidebar' value="Cart" icon="fa fa-shopping-cart" oncomplete="PF('shoppingCartSidebar').show()"></p:commandButton>
+
+        <p:sidebar id="shoppingCartSidebar" widgetVar="shoppingCartSidebar" position="right" baseZIndex="-1">
+            <h2 style="font-weight:normal">Shopping Cart</h2>
+            <br/>
+            <p:panelGrid id="shoppingCartProducts">
+                    <p:row>
+                        <p:column id="headerProduct" colspan="1">Product</p:column>
+                        <p:column id="headerQuantity" colspan="1">Quantity</p:column>
+                        <p:column id="headerAction" colspan="1">Action</p:column>
+                    </p:row>
+                <p:repeat value="#{shoppingCartManagedBean.shoppingCartLineEntities}" var="shoppingCartLineEntity">
+                    <p:row>
+                        <p:column id="productLabel" colspan="1">#{shoppingCartLineEntity.productEntity.name}</p:column>
+                        <p:column id="quantityLabel" colspan="1">#{shoppingCartLineEntity.quantity}</p:column>
+                        <p:column id="actionLabel" colspan="1"><p:commandButton icon="fa fa-trash" title="Remove from Cart" actionListener="#{shoppingCartManagedBean.removeProductFromShoppingCart}" update=":menuBarForm:shoppingCartProducts">
                             <f:attribute name="productEntityToRemove" value="#{shoppingCartLineEntity.productEntity}" />
-                        </p:commandButton>
-                    </p:repeat>
-                </p:panelGrid>
-            </p:row>
-        </p:panelGrid>
-        <br/>
-        <p:commandButton value="Checkout" oncomplete="PF('shoppingCartSidebar').hide()"/>
-    </p:sidebar>
+                        </p:commandButton></p:column>
+                    </p:row>
+                </p:repeat>
+            </p:panelGrid>
+            <br/>
+            <p:commandButton value="Checkout" oncomplete="PF('shoppingCartSidebar').hide()"/>
+        </p:sidebar>
 </ui:composition>
