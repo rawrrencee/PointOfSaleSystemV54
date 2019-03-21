@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="searchProductsByName" />
+        
+        <div>
+            <h3>Search Products by Name</h3>                        
+
+            <h:form id="formMain">
+                                
+                <br />
+                
+                <div style="text-align: center;">
+                
+                    <p:inputText id="txtSearchString" value="#{searchProductsByNameManagedBean.searchString}" style="font-size: x-large;">
+                        <p:ajax event="keyup" process="@this" update="formMain:dataTableMain" listener="#{searchProductsByNameManagedBean.searchProduct}" />
+                    </p:inputText>
+                    &nbsp;
+                    <p:commandButton value="Search" style="font-size: x-large;">
+                        <p:ajax event="click" process="@this formMain:txtSearchString" update="formMain:dataTableMain" listener="#{searchProductsByNameManagedBean.searchProduct}" />
+                    </p:commandButton>
+
+                </div>
+                
+                <br />
+                
+                <p:dataTable id="dataTableMain" widgetVar="dataTableMain" value="#{searchProductsByNameManagedBean.productEntities}" var="productEntity" rowKey="#{productEntity.productId}" rowIndexVar="row"                             
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                    
+                    <p:column headerText="SKU Code" sortBy="#{productEntity.skuCode}">
+                        <h:outputText value="#{productEntity.skuCode}" />
+                    </p:column>
+
+                    <p:column headerText="Product ID" sortBy="#{productEntity.productId}">
+                        <h:outputText value="#{productEntity.productId}" />
+                    </p:column>                            
+
+                    <p:column headerText="Name" sortBy="#{productEntity.name}">
+                        <h:outputText value="#{productEntity.name}" />
+                    </p:column>
+                    
+                    <p:column headerText="Description" sortBy="#{productEntity.description}">
+                        <h:outputText value="#{productEntity.description}" />
+                    </p:column>
+
+                    <p:column headerText="Quantity on Hand" sortBy="#{productEntity.quantityOnHand}">
+                        <h:outputText value="#{productEntity.quantityOnHand}" />
+                    </p:column>
+
+                    <p:column headerText="Unit Price" sortBy="#{productEntity.unitPrice}">
+                        <h:outputText value="#{productEntity.unitPrice}">
+                            <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Category" sortBy="#{productEntity.categoryEntity.name}">
+                        <h:outputText value="#{productEntity.categoryEntity.name}" />
+                    </p:column>
+
+                    <p:column headerText="Action" >
+                        <p:commandButton update="formViewProduct" oncomplete="PF('dialogViewProduct').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{productEntity}" target="#{searchProductsByNameManagedBean.selectedProductEntityToView}" />
+                        </p:commandButton>                        
+                    </p:column>
+
+                </p:dataTable>
+                                
+            </h:form>
+            
+            <h:form id="formViewProduct">
+            
+                <p:dialog id="dialogViewProduct" widgetVar="dialogViewProduct" header="View Product" closable="true">
+
+                    <p:panelGrid>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Product ID: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{searchProductsByNameManagedBean.selectedProductEntityToView.productId}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="SKU Code: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{searchProductsByNameManagedBean.selectedProductEntityToView.skuCode}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Name: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{searchProductsByNameManagedBean.selectedProductEntityToView.name}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Description: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{searchProductsByNameManagedBean.selectedProductEntityToView.description}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Quantity On Hand: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{searchProductsByNameManagedBean.selectedProductEntityToView.quantityOnHand}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Reorder Quantity: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{searchProductsByNameManagedBean.selectedProductEntityToView.reorderQuantity}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Unit Price: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{searchProductsByNameManagedBean.selectedProductEntityToView.unitPrice}">
+                                    <f:convertNumber type="currency" currencySymbol="$" maxIntegerDigits="5" maxFractionDigits="2"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Product Rating: " />
+                            </p:column>
+                            <p:column>
+                                <p:rating id="productRating" value="#{searchProductsByNameManagedBean.selectedProductEntityToView.productRating}" stars="5" readonly="true" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Category: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{searchProductsByNameManagedBean.selectedProductEntityToView.categoryEntity.name}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Tag(s): " />
+                            </p:column>
+                            <p:column>
+                                <p:dataList value="#{searchProductsByNameManagedBean.selectedProductEntityToView.tagEntities}" var="tag" type="unordered">
+                                    #{tag.name}
+                                </p:dataList>
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+
+                </p:dialog>
+
+            </h:form>
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

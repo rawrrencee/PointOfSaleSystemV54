@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="createNewProduct" />
+        
+        <div>
+            <h3>Create New Product</h3>
+            <br/>
+                        
+            <h:form id="formMain">
+                <h:messages errorClass="errorTextsWithBullet" fatalClass="errorTextsWithBullet" infoClass="infoTextsWithBullet" globalOnly="true" />
+                <br/>
+
+                <h:panelGrid columnClasses="dataTable3Label,dataTable3Value,dataTable3Message" columns="3">
+                    <h:outputLabel style="font-weight: bold;" for="txtSkuCode" value="SKU Code" />
+                    <h:inputText id="txtSkuCode" value="#{createNewProductManagedBean.newProductEntity.skuCode}" required="true" requiredMessage="SKU Code is required" />
+                    <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="txtSkuCode" />
+
+                    <h:outputLabel style="font-weight: bold;" for="txtName" value="Name" />
+                    <h:inputText id="txtName" value="#{createNewProductManagedBean.newProductEntity.name}" required="true" requiredMessage="Name is required" />
+                    <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="txtName" />
+
+
+                    <h:outputLabel style="font-weight: bold;" for="txtDescription" value="Description" />
+                    <h:inputText id="txtDescription" value="#{createNewProductManagedBean.newProductEntity.description}" required="true" requiredMessage="Description is required" />
+                    <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="txtDescription" />
+
+
+                    <h:outputLabel style="font-weight: bold;" for="txtQuantityOnHand" value="Quantity On Hand" />
+                    <h:inputText id="txtQuantityOnHand" value="#{createNewProductManagedBean.newProductEntity.quantityOnHand}" required="true" requiredMessage="Quantity On Hand is required" />
+                    <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="txtQuantityOnHand" />
+
+
+                    <h:outputLabel style="font-weight: bold;" for="txtReorderQuantity" value="Reorder Quantity" />
+                    <h:inputText id="txtReorderQuantity" value="#{createNewProductManagedBean.newProductEntity.reorderQuantity}" required="true" requiredMessage="Reorder Quantity is required" validator="reorderQuantityValidator" />
+                    <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="txtReorderQuantity" />
+
+
+                    <h:outputLabel style="font-weight: bold;" for="txtUnitPrice" value="Unit Price ($)" />
+                    <h:inputText id="txtUnitPrice" value="#{createNewProductManagedBean.newProductEntity.unitPrice}" required="true" requiredMessage="Unit Price is required" />
+                    <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="txtUnitPrice" />
+
+                    <h:outputLabel style="font-weight: bold;" for="txtProductRating" value="Product Rating" />
+                    <h:panelGroup>
+                        <h:inputText id="txtProductRating" p:type="range" value="#{createNewProductManagedBean.newProductEntity.productRating}" 
+                            p:min="1" p:max="5" p:required="required" 
+                            p:title="Drag the slider between 1 and 5 inclusive.">                            
+                            <f:ajax event="change" execute="@this" render="formMain:lblProductRating" />                            
+                        </h:inputText>
+                        &nbsp;
+                        <h:outputText id="lblProductRating" value="#{createNewProductManagedBean.newProductEntity.productRating}" style="vertical-align: top;" />
+                    </h:panelGroup>
+                    <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="txtProductRating" />
+
+                    <h:outputLabel style="font-weight: bold;" for="selCategory" value="Category" />
+                    <h:selectOneMenu id="selCategory" value="#{createNewProductManagedBean.categoryId}">
+                        <f:selectItem itemValue="0" itemLabel="[Select One]" noSelectionOption="true" />
+                        <f:selectItems value="#{createNewProductManagedBean.categoryEntities}" var="categoryEntity" itemValue="#{categoryEntity.categoryId}" itemLabel="#{categoryEntity.name}" />
+                    </h:selectOneMenu>
+                    <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="selCategory" />
+
+                    <h:outputLabel style="font-weight: bold;" for="selTags" value="Tag(s)" />
+                    <h:selectManyListbox id="selTags" value="#{createNewProductManagedBean.tagIdsString}" size="3" >
+                        <f:selectItems value="#{createNewProductManagedBean.tagEntities}" var="tagEntity" itemValue="#{tagEntity.tagId}" itemLabel="#{tagEntity.name}" />
+                    </h:selectManyListbox>
+                    <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="selTags" />
+
+                </h:panelGrid>
+                <br/>
+                <div style="text-align: center;">
+                    <h:commandButton value="Clear" type="reset" />&nbsp;
+                    <h:commandButton value="Create" type="submit">
+                        <f:ajax event="click" execute="@form" render="@form" listener="#{createNewProductManagedBean.createNewProduct}" />
+                    </h:commandButton>
+                </div>
+            </h:form>
+            
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

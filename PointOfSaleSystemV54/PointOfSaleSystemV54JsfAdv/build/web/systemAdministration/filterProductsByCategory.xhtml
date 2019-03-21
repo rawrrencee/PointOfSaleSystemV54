@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="filterProductsByCategory" />
+        
+        <div>
+            <h3>Filter Products by Category</h3>
+            
+            <h:form id="formMain">
+                
+                <br />
+                
+                <h:outputLabel for="selCategory" value="Category: " style="font-weight: bold;" />
+                <h:selectOneMenu id="selCategory" value="#{filterProductsByCategoryManagedBean.selectedCategoryId}">
+                
+                    <f:selectItem itemValue="0" itemLabel="[Select One]" />
+                    <f:selectItems value="#{filterProductsByCategoryManagedBean.selectItems}" />
+                    
+                    <f:ajax event="change" execute="@form" render="formMain:dataTableMain" listener="#{filterProductsByCategoryManagedBean.filterProduct}" />
+                    
+                </h:selectOneMenu>
+                
+                <br /><br />
+                
+                <h:dataTable id="dataTableMain" value="#{filterProductsByCategoryManagedBean.productEntities}" var="productEntity" style="width: 100%;">
+
+                    <h:column>			
+                        <f:facet name = "header">SKU Code</f:facet>
+                        <h:outputText value="#{productEntity.skuCode}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name = "header">Product ID</f:facet>
+                        <h:outputText value="#{productEntity.productId}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Name</f:facet>
+                        <h:outputText value="#{productEntity.name}" />
+                    </h:column>                    
+
+                    <h:column>    				
+                        <f:facet name = "header">Category</f:facet>
+                        <h:outputText value="#{productEntity.categoryEntity.name}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Action</f:facet>
+                        <h:commandLink value="View" actionListener="#{filterProductsByCategoryManagedBean.viewProductDetails}">
+                            <f:attribute name="productId" value="#{productEntity.productId}" />
+                        </h:commandLink>
+                    </h:column>
+
+                </h:dataTable>
+                
+            </h:form>
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

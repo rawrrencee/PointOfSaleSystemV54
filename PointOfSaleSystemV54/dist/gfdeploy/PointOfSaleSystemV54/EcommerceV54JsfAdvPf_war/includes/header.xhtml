@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+
+    <h:panelGroup rendered="#{!sessionScope.isLogin}">
+        <h2>Welcome to EcommerceV54JsfAdvPf</h2>
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{sessionScope.isLogin == true}">
+        <h2>Customer Panel</h2>
+    </h:panelGroup>
+
+    <header style="text-align: right;">
+        <h:panelGroup rendered="#{!sessionScope.isLogin}">
+            <h:form id="loginForm">
+
+                <p:outputLabel for="email" value="Email" />&nbsp;
+                <p:inputText id="email" value="#{customerManagedBean.email}" size="16" required="true" requiredMessage="Email is required" maxlength="32">
+                    <f:validateLength minimum="4" />
+                </p:inputText>
+                &nbsp;
+                <p:outputLabel for="password" value="Password" />&nbsp;
+                <p:password id="password" value="#{customerManagedBean.password}" size="16" required="true" requiredMessage="Password is required" maxlength="32">
+                    <f:validateLength minimum="4" />
+                </p:password>
+                &nbsp;
+                <p:commandButton type="reset" value="Clear" icon="fa fa-undo" />&nbsp;
+                <p:commandButton type="submit" value="Login" actionListener="#{customerManagedBean.login}" icon="fa fa-sign-in" />&nbsp;
+                <p:commandButton value="Register" update="formRegisterCustomer" oncomplete="PF('dialogRegisterCustomer').show()" icon="fa fa-user" />
+
+                <p:growl autoUpdate="true" />
+            </h:form>
+
+            <h:form id="formRegisterCustomer">
+                <p:dialog id="dialogRegisterCustomer" widgetVar="dialogRegisterCustomer" header="Register" closable="true" closeOnEscape="true">
+                    <p:messages id="messagesRegisterCustomer" redisplay="false" />
+                    <p:panelGrid>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="firstName" value="First Name " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="firstName" value="#{customerManagedBean.newCustomerEntity.firstName}" required="true" requiredMessage="First Name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="firstName" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="lastName" value="Last Name " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="lastName" value="#{customerManagedBean.newCustomerEntity.lastName}" required="true" requiredMessage="Last Name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="lastName" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="email" value="Email " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="email" value="#{customerManagedBean.newCustomerEntity.email}" required="true" requiredMessage="Email is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="email" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="password" value="Password" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:password id="password" value="#{customerManagedBean.newCustomerEntity.password}" required="true" requiredMessage="Password is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="password" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton  value="Register" actionListener="#{customerManagedBean.createNewCustomer}" oncomplete="PF('dialogRegisterCustomer').show();" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+        </h:panelGroup>
+    </header>
+
+</ui:composition>

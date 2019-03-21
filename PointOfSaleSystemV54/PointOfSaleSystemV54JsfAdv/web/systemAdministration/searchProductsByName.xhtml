@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="searchProductsByName" />
+        
+        <div>
+            <h3>Search Products by Name</h3>                        
+
+            <h:form id="formMain">
+                                
+                <br />
+                
+                <div style="text-align: center;">
+                
+                    <h:inputText id="txtSearchString" value="#{searchProductsByNameManagedBean.searchString}" style="font-size: x-large;">
+                        <f:ajax event="keyup" execute="@this" render="formMain:dataTableMain" listener="#{searchProductsByNameManagedBean.searchProduct}" />
+                    </h:inputText>
+                    &nbsp;
+                    <h:commandButton value="Search" style="font-size: x-large;">
+                        <f:ajax event="click" execute="@this formMain:txtSearchString" render="formMain:dataTableMain" listener="#{searchProductsByNameManagedBean.searchProduct}" />
+                    </h:commandButton>
+
+                </div>
+                
+                <br />
+                
+                <h:dataTable id="dataTableMain" value="#{searchProductsByNameManagedBean.productEntities}" var="productEntity" style="width: 100%;">
+
+                    <h:column>			
+                        <f:facet name = "header">SKU Code</f:facet>
+                        <h:outputText value="#{productEntity.skuCode}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Product ID</f:facet>
+                        <h:outputText value="#{productEntity.productId}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Name</f:facet>
+                        <h:outputText value="#{productEntity.name}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Description</f:facet>
+                        <h:outputText value="#{productEntity.description}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Quantity On Hand</f:facet>
+                        <h:outputText value="#{productEntity.quantityOnHand}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Unit Price</f:facet>
+                        <div style="text-align: right;">
+                            <h:outputText value="#{productEntity.unitPrice}">
+                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                            </h:outputText>
+                        </div>
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Category</f:facet>
+                        <h:outputText value="#{productEntity.categoryEntity.name}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Action</f:facet>
+                        <h:commandLink value="View" actionListener="#{searchProductsByNameManagedBean.viewProductDetails}">
+                            <f:attribute name="productId" value="#{productEntity.productId}" />
+                        </h:commandLink>
+                    </h:column>
+
+                </h:dataTable>
+            </h:form>
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

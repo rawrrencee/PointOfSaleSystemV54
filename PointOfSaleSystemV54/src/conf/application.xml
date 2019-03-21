@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application version="7" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/application_7.xsd">
+  <display-name>PointOfSaleSystemV54</display-name>
+  <module>
+    <java>PointOfSaleSystemV54Client.jar</java>
+  </module>
+  <module>
+    <web>
+      <web-uri>PointOfSaleSystemV54Jsp.war</web-uri>
+      <context-root>/PointOfSaleSystemV54Jsp</context-root>
+    </web>
+  </module>
+  <module>
+    <web>
+      <web-uri>PointOfSaleSystemV54Jsf.war</web-uri>
+      <context-root>/PointOfSaleSystemV54Jsf</context-root>
+    </web>
+  </module>
+  <module>
+    <web>
+      <web-uri>PointOfSaleSystemV54JsfAdv.war</web-uri>
+      <context-root>/PointOfSaleSystemV54JsfAdv</context-root>
+    </web>
+  </module>
+  <module>
+    <web>
+      <web-uri>PointOfSaleSystemV54JsfAdvPf.war</web-uri>
+      <context-root>/PointOfSaleSystemV54JsfAdvPf</context-root>
+    </web>
+  </module>
+  <module>
+    <ejb>PointOfSaleSystemV54-ejb.jar</ejb>
+  </module>
+  <module>
+    <web>
+      <web-uri>EcommerceV54JsfAdvPf.war</web-uri>
+      <context-root>/EcommerceV54JsfAdvPf</context-root>
+    </web>
+  </module>
+</application>

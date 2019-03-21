@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="filterProductsByTags" />
+        
+        <div>
+            <h3>Filter Products by Tags</h3>                       
+            
+            <h:form id="formMain">
+                
+                <p:layout>
+                
+                    <p:layoutUnit position="west" resizable="true">
+                        
+                        <p:outputLabel for="selCondition" value="Condition: " style="font-weight: bold;" />
+                        <p:selectOneMenu id="selCondition" value="#{filterProductsByTagsManagedBean.condition}">
+
+                            <f:selectItem itemValue="OR" itemLabel="OR" itemDescription="OR" />
+                            <f:selectItem itemValue="AND" itemLabel="AND" itemDescription="AND" />
+
+                            <p:ajax process="@form" update="formMain:dataTableMain" listener="#{filterProductsByTagsManagedBean.filterProduct}" />
+
+                        </p:selectOneMenu>
+
+                        <br /><br />
+
+                        <p:outputLabel for="selTags" value="Tags: " style="font-weight: bold;" />
+                        <p:selectManyMenu id="selTags" value="#{filterProductsByTagsManagedBean.selectedTagIds}" showCheckbox="true">
+                            <f:selectItems value="#{filterProductsByTagsManagedBean.selectItems}" />
+
+                            <p:ajax process="@form" update="formMain:dataTableMain" listener="#{filterProductsByTagsManagedBean.filterProduct}" />
+
+                        </p:selectManyMenu>                                
+
+                    </p:layoutUnit>
+
+                    <p:layoutUnit position="center">
+                        
+                        <p:dataTable id="dataTableMain" widgetVar="dataTableMain" value="#{filterProductsByTagsManagedBean.productEntities}" var="productEntity" rowKey="#{productEntity.productId}" rowIndexVar="row"                             
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                    
+                            <p:column headerText="SKU Code" sortBy="#{productEntity.skuCode}">
+                                <h:outputText value="#{productEntity.skuCode}" />
+                            </p:column>
+
+                            <p:column headerText="Product ID" sortBy="#{productEntity.productId}">
+                                <h:outputText value="#{productEntity.productId}" />
+                            </p:column>                            
+
+                            <p:column headerText="Name" sortBy="#{productEntity.name}">
+                                <h:outputText value="#{productEntity.name}" />
+                            </p:column>
+
+                            <p:column headerText="Description" sortBy="#{productEntity.description}">
+                                <h:outputText value="#{productEntity.description}" />
+                            </p:column>
+
+                            <p:column headerText="Quantity on Hand" sortBy="#{productEntity.quantityOnHand}">
+                                <h:outputText value="#{productEntity.quantityOnHand}" />
+                            </p:column>
+
+                            <p:column headerText="Unit Price" sortBy="#{productEntity.unitPrice}">
+                                <h:outputText value="#{productEntity.unitPrice}">
+                                    <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Category" sortBy="#{productEntity.categoryEntity.name}">
+                                <h:outputText value="#{productEntity.categoryEntity.name}" />
+                            </p:column>
+
+                            <p:column headerText="Action" >
+                                <p:commandButton update="formViewProduct" oncomplete="PF('dialogViewProduct').show()" icon="ui-icon-document" title="View">
+                                    <f:setPropertyActionListener value="#{productEntity}" target="#{filterProductsByTagsManagedBean.selectedProductEntityToView}" />
+                                </p:commandButton>                        
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:layoutUnit>
+
+                </p:layout>                                               
+                
+            </h:form>
+            
+            <h:form id="formViewProduct">
+            
+                <p:dialog id="dialogViewProduct" widgetVar="dialogViewProduct" header="View Product" closable="true">
+
+                    <p:panelGrid>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Product ID: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.productId}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="SKU Code: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.skuCode}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Name: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.name}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Description: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.description}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Quantity On Hand: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.quantityOnHand}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Reorder Quantity: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.reorderQuantity}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Unit Price: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.unitPrice}">
+                                    <f:convertNumber type="currency" currencySymbol="$" maxIntegerDigits="5" maxFractionDigits="2"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Product Rating: " />
+                            </p:column>
+                            <p:column>
+                                <p:rating id="productRating" value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.productRating}" stars="5" readonly="true" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Category: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.categoryEntity.name}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Tag(s): " />
+                            </p:column>
+                            <p:column>
+                                <p:dataList value="#{filterProductsByTagsManagedBean.selectedProductEntityToView.tagEntities}" var="tag" type="unordered">
+                                    #{tag.name}
+                                </p:dataList>
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+
+                </p:dialog>
+
+            </h:form>
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

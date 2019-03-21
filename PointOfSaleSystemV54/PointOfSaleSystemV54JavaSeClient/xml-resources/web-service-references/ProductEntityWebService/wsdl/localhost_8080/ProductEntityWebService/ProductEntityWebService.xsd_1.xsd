@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.3.2-b608 (trunk-7979; 2015-01-21T12:50:19+0000) JAXWS-RI/2.2.11-b150120.1832 JAXWS-API/2.2.12 JAXB-RI/2.2.12-b141219.1637 JAXB-API/2.2.13-b141020.1521 svn-revision#unknown. --><xs:schema xmlns:tns="http://ws.session.ejb/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://ws.session.ejb/">
+
+<xs:element name="CreateNewProductException" type="tns:CreateNewProductException"/>
+
+<xs:element name="InputDataValidationException" type="tns:InputDataValidationException"/>
+
+<xs:element name="InvalidLoginCredentialException" type="tns:InvalidLoginCredentialException"/>
+
+<xs:element name="ProductNotFoundException" type="tns:ProductNotFoundException"/>
+
+<xs:element name="createNewProduct" type="tns:createNewProduct"/>
+
+<xs:element name="createNewProductResponse" type="tns:createNewProductResponse"/>
+
+<xs:element name="retrieveAllProducts" type="tns:retrieveAllProducts"/>
+
+<xs:element name="retrieveAllProductsResponse" type="tns:retrieveAllProductsResponse"/>
+
+<xs:element name="retrieveProductByProductId" type="tns:retrieveProductByProductId"/>
+
+<xs:element name="retrieveProductByProductIdResponse" type="tns:retrieveProductByProductIdResponse"/>
+
+<xs:complexType name="retrieveAllProducts">
+<xs:sequence>
+<xs:element name="username" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveAllProductsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:productEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="productEntity">
+<xs:sequence>
+<xs:element name="categoryEntity" type="tns:categoryEntity" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="productId" type="xs:long" minOccurs="0"/>
+<xs:element name="productRating" type="xs:int" minOccurs="0"/>
+<xs:element name="quantityOnHand" type="xs:int" minOccurs="0"/>
+<xs:element name="reorderQuantity" type="xs:int" minOccurs="0"/>
+<xs:element name="skuCode" type="xs:string" minOccurs="0"/>
+<xs:element name="tagEntities" type="tns:tagEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="unitPrice" type="xs:decimal" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="categoryEntity">
+<xs:sequence>
+<xs:element name="categoryId" type="xs:long" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="parentCategoryEntity" type="tns:categoryEntity" minOccurs="0"/>
+<xs:element name="productEntities" type="tns:productEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="subCategoryEntities" type="tns:categoryEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="tagEntity">
+<xs:sequence>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="productEntities" type="tns:productEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="tagId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="InvalidLoginCredentialException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveProductByProductId">
+<xs:sequence>
+<xs:element name="username" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="productId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveProductByProductIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:productEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="ProductNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createNewProduct">
+<xs:sequence>
+<xs:element name="username" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="newProductEntity" type="tns:productEntity" minOccurs="0"/>
+<xs:element name="categoryId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createNewProductResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:productEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="InputDataValidationException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CreateNewProductException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

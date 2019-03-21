@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="viewProductDetails" />
+        
+        <div>
+            <h3>View Product Details</h3>
+            
+            <br/>
+            
+            #{viewProductDetailsManagedBean.foo()}
+            <h:messages errorClass="errorTextsWithBullet" fatalClass="errorTextsWithBullet" infoClass="infoTextsWithBullet" globalOnly="true" />
+            <br/>
+                
+            <h:form rendered="#{viewProductDetailsManagedBean.productEntityToView != null}">
+                <h:commandLink value="Back" actionListener="#{viewProductDetailsManagedBean.back}" />&nbsp;|
+                <h:commandLink value="Update" actionListener="#{viewProductDetailsManagedBean.updateProduct}" />&nbsp;|
+                <h:commandLink value="Delete" actionListener="#{viewProductDetailsManagedBean.deleteProduct}" />
+            </h:form>
+
+            <br/>
+
+            <h:panelGrid columnClasses="dataTableLabel,dataTableValue" columns="2" style="width: 100%;" rendered="#{viewProductDetailsManagedBean.productEntityToView != null}">
+
+                <h:outputText style="font-weight: bold; width: 20%;" value="Product ID"/>
+                <h:outputText style="width: 80%;" value="#{viewProductDetailsManagedBean.productEntityToView.productId}"/>
+
+                <h:outputText style="font-weight: bold;" value="SKU Code"/>
+                <h:outputText value="#{viewProductDetailsManagedBean.productEntityToView.skuCode}"/>
+
+                <h:outputText style="font-weight: bold;" value="Name"/>
+                <h:outputText value="#{viewProductDetailsManagedBean.productEntityToView.name}"/>
+
+                <h:outputText style="font-weight: bold;" value="Description"/>
+                <h:outputText value="#{viewProductDetailsManagedBean.productEntityToView.description}"/>
+
+                <h:outputText style="font-weight: bold;" value="Quantity On Hand"/>
+                <h:outputText value="#{viewProductDetailsManagedBean.productEntityToView.quantityOnHand}"/>
+
+                <h:outputText style="font-weight: bold;" value="Reorder Quantity"/>
+                <h:outputText value="#{viewProductDetailsManagedBean.productEntityToView.reorderQuantity}"/>
+
+                <h:outputText style="font-weight: bold;" value="Unit Price"/>
+                <h:outputText value="#{viewProductDetailsManagedBean.productEntityToView.unitPrice}">
+                    <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                </h:outputText>
+
+                <h:outputText style="font-weight: bold;" value="Product Rating"/>
+                <h:outputText value="#{viewProductDetailsManagedBean.productEntityToView.productRating}"/>
+
+                <h:outputText style="font-weight: bold;" value="Category"/>
+                <h:outputText value="#{viewProductDetailsManagedBean.productEntityToView.categoryEntity.name}"/>
+
+                <h:outputText style="font-weight: bold;" value="Tag(s)"/>
+                <h:panelGroup>
+                    <ul style="margin-left: 20px;">
+                        <ui:repeat value="#{viewProductDetailsManagedBean.productEntityToView.tagEntities}" var="tagEntity">
+                            <li>#{tagEntity.name}</li>
+                        </ui:repeat>
+                    </ul>
+                </h:panelGroup>
+
+            </h:panelGrid>
+        </div>
+        
+    </ui:define>
+
+</ui:composition>
