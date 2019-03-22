@@ -74,6 +74,24 @@
 
 
         </h:panelGroup>
+
+        <h:panelGroup rendered="#{sessionScope.isLogin == true}">
+            <p:dataGrid var="productEntity" value="#{productManagementManagedBean.productEntities}" columns="3" layout="grid"
+                        rows="6" paginator="true" id="productEntities"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="6,12,16">
+
+                <p:panel header="#{productEntity.name}" style="text-align:center">
+                    <h:panelGrid columns="1" style="width:100%">
+
+                        <h:outputText value="#{productEntity.description}" />
+                        <h:outputText value="#{productEntity.unitPrice}" />
+                        <h:outputText value="#{productEntity.categoryEntity.name}" />
+
+                    </h:panelGrid>
+                </p:panel>
+            </p:dataGrid>
+        </h:panelGroup>
     </ui:define>
 
 </ui:composition>

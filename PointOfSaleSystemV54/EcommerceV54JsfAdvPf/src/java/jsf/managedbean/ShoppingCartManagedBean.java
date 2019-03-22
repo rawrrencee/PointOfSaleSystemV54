@@ -7,13 +7,13 @@ package jsf.managedbean;
 
 import ejb.session.stateless.CustomerEntityControllerLocal;
 import ejb.session.stateless.ShoppingCartControllerLocal;
-import entity.CustomerEntity;
 import entity.ProductEntity;
 import entity.ShoppingCartEntity;
 import entity.ShoppingCartLineEntity;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -21,8 +21,6 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import util.exception.CustomerNotFoundException;
-import util.exception.ShoppingCartNotFoundException;
 
 /**
  *
@@ -41,13 +39,17 @@ public class ShoppingCartManagedBean implements Serializable {
     private ShoppingCartEntity shoppingCartEntity;
     private List<ShoppingCartLineEntity> shoppingCartLineEntities;
 
+    private BigDecimal totalPrice;
+
     private ProductEntity productEntityToAdd;
     private ProductEntity productEntityToRemove;
+    private ProductEntity productEntityToModify;
 
     public ShoppingCartManagedBean() {
         shoppingCartEntity = new ShoppingCartEntity();
         shoppingCartLineEntities = new ArrayList<>();
         shoppingCartEntity.setShoppingCartLineEntities(shoppingCartLineEntities);
+        totalPrice = BigDecimal.ZERO;
     }
 
     @PostConstruct
@@ -76,6 +78,7 @@ public class ShoppingCartManagedBean implements Serializable {
                 Integer currentQty = shoppingCartLineEntity.getQuantity();
                 shoppingCartLineEntity.setQuantity(currentQty + 1);
                 containsProduct = true;
+                totalPrice = totalPrice.add(productEntityToAdd.getUnitPrice());
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product already added to cart, quantity increased", null));
                 return;
             }
@@ -83,6 +86,7 @@ public class ShoppingCartManagedBean implements Serializable {
         if (!containsProduct) {
             ShoppingCartLineEntity newShoppingCartLine = new ShoppingCartLineEntity(1, getProductEntityToAdd());
             getShoppingCartEntity().getShoppingCartLineEntities().add(newShoppingCartLine);
+            totalPrice = totalPrice.add(productEntityToAdd.getUnitPrice());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product added to cart", null));
 
         }
@@ -92,8 +96,42 @@ public class ShoppingCartManagedBean implements Serializable {
         productEntityToRemove = (ProductEntity) event.getComponent().getAttributes().get("productEntityToRemove");
         for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
             if (shoppingCartLineEntity.getProductEntity().equals(productEntityToRemove)) {
+                Integer quantity = shoppingCartLineEntity.getQuantity();
                 shoppingCartLineEntities.remove(shoppingCartLineEntity);
+                totalPrice = totalPrice.subtract(productEntityToRemove.getUnitPrice().multiply(BigDecimal.valueOf(quantity)));
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product removed from cart", null));
+                return;
+            }
+        }
+    }
+
+    public void increaseProductQuantity(ActionEvent event) {
+        productEntityToModify = (ProductEntity) event.getComponent().getAttributes().get("productEntityToModify");
+        for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
+            if (shoppingCartLineEntity.getProductEntity().equals(productEntityToModify)) {
+                shoppingCartLineEntity.setQuantity(shoppingCartLineEntity.getQuantity() + 1);
+                totalPrice = totalPrice.add(productEntityToModify.getUnitPrice());
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product quantity increased", null));
+                return;
+            }
+        }
+    }
+
+    public void decreaseProductQuantity(ActionEvent event) {
+        productEntityToModify = (ProductEntity) event.getComponent().getAttributes().get("productEntityToModify");
+        for (int i =0; i < shoppingCartLineEntities.size(); i++) {
+            if (shoppingCartLineEntities.get(i).getProductEntity().equals(productEntityToModify)) {
+                if (shoppingCartLineEntities.get(i).getQuantity() > 0) {
+                    shoppingCartLineEntities.get(i).setQuantity(shoppingCartLineEntities.get(i).getQuantity() - 1);
+                    totalPrice = totalPrice.subtract(productEntityToModify.getUnitPrice());
+                    if (shoppingCartLineEntities.get(i).getQuantity() == 0) {
+                        shoppingCartLineEntities.remove(i);
+                        return;
+                    }
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product quantity decreased", null));
+                } else {
+                    return;
+                }
                 return;
             }
         }
@@ -121,6 +159,14 @@ public class ShoppingCartManagedBean implements Serializable {
 
     public void setProductEntityToAdd(ProductEntity productEntityToAdd) {
         this.productEntityToAdd = productEntityToAdd;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
 }
