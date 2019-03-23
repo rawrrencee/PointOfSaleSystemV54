@@ -18,7 +18,7 @@ import javax.faces.view.ViewScoped;
 
 
 
-@Named
+@Named(value = "productManagementManagedBean")
 @ViewScoped
 
 public class ProductManagementManagedBean implements Serializable

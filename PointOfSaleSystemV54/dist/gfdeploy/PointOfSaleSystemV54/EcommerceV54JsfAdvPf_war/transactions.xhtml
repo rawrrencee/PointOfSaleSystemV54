@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <h:panelGroup rendered="#{sessionScope.isLogin == true and saleTransactionManagedBean.saleTransactionEntities.size() != null}">
+            <h:form id="formAllSaleTransactions">
+                <p:dataList var="saleTransactionEntity" 
+                            value="#{saleTransactionManagedBean.saleTransactionEntities}"
+                            rows="12" paginator="true" paginatorPosition="bottom" rowsPerPageTemplate="6,12,16"
+                            type="unordered" itemType="none"
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                    <p:outputPanel id="saleTransactionEntityDetails">
+                        <p:panelGrid style="text-align: left; width: 100%;" columnClasses="orderNumber, orderDate, orderQuantity, orderTotalAmount">
+                            <p:spacer/>
+                            <p:row style="border: none;">
+                                <p:column id="orderNumber" colspan="1" style="width:10%;">
+                                    <h:outputText value="Order Number" style="font-weight: lighter; font-size: smaller;"/><br/>
+                                    <h:outputText value="#{saleTransactionEntity.saleTransactionId}" style="font-size: large; font-weight: bold;"/><br/>
+                                </p:column>
+                                <p:column id="orderDate" colspan="1" style="width:40%;">
+                                    <h:outputText value="Order Date" style="font-weight: lighter; font-size: smaller;"/><br/>
+                                    <h:outputText value="#{saleTransactionEntity.transactionDateTime}" style="font-size: large; font-weight: bold;"/><br/>
+                                </p:column>
+                                <p:column id="orderQuantity" colspan="1" style="width:10%;">
+                                    <h:outputText value="#{saleTransactionEntity.totalLineItem} items"/>
+                                </p:column>
+                                <p:column id="orderTotalAmount" colspan="1" style="width:40%;">
+                                    <h:outputText value="Total Amount" style="font-weight: lighter; font-size: smaller;"/>
+                                    <h:outputText value="#{saleTransactionEntity.totalAmount}" style="font-size: smaller; font-weight: bold;">
+                                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:separator/>
+                    </p:outputPanel>
+                </p:dataList>
+            </h:form>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

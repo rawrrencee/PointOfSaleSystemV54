@@ -21,6 +21,7 @@
                 <f:facet id="menuBarOptions" name="options">
                     <p:menuButton id="displayUserButton" value="Logged in as: #{sessionScope.currentCustomerEntity.email}">
                         <p:menuitem id="viewUserProfileButton" value="View Profile"/>
+                        <p:menuitem id="viewSaleTransactions" value="View Orders" outcome="/transactions.xhtml" />
                         <p:separator />
                         <p:menuitem id="userLogoutButton" value="Logout" actionListener="#{customerManagedBean.logout}" icon="fa fa-sign-out" rendered="#{sessionScope.isLogin == true}"/>
                     </p:menuButton> &nbsp;<ui:include src="/includes/shoppingCart.xhtml"/>
