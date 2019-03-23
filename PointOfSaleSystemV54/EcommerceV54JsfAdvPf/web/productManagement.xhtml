@@ -9,88 +9,34 @@
 
     <ui:define name="content">
         <h:panelGroup rendered="#{sessionScope.isLogin == true}">
-            <h3>View Products</h3>
-
             <h:form id="formAllProducts">
+                <p:growl id="messages" redisplay="false"/>
+                <p:dataGrid 
+                    id="dataGridAllProducts" widgetVar="dataGridAllProducts"
+                    var="productEntity" value="#{productManagementManagedBean.productEntities}" columns="3" layout="grid"
+                    rows="6" paginator="true" paginatorPosition="bottom"
+                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    rowsPerPageTemplate="6,12,16">
 
-                <p:messages id="messages" redisplay="false" closable="true" />
+                    <p:panel header="#{productEntity.name}" style="text-align:center">
+                        <h:panelGrid columns="1" style="width:100%">
 
-                <p:dataTable id="dataTableAllProducts" widgetVar="dataTableAllProducts" value="#{productManagementManagedBean.productEntities}" var="productEntity" rowKey="#{productEntity.productId}" rowIndexVar="row"
-                             filteredValue="#{productManagementManagedBean.filteredProductEntities}"
-                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                            <h:outputText value="ID: #{productEntity.productId}" />
+                            <h:outputText value="#{productEntity.description}" />
+                            <h:outputText value="#{productEntity.unitPrice}">
+                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                            </h:outputText>
+                            <h:outputText value="#{productEntity.categoryEntity.name}" />
+                            <br/>
 
-                    <f:facet name="header">
-                        <p:outputPanel style="text-align: right;">
-                            <h:outputText value="Search all fields:" />
-                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllProducts').filter()" style="width:300px" placeholder="Enter keyword"/>
-                        </p:outputPanel>
-                    </f:facet>
+                            <p:commandButton icon="fa fa-shopping-cart" value="Add to Cart" style="text-align: center; display: inline-block;" title="Add to Cart" actionListener="#{shoppingCartManagedBean.addProductToShoppingCart}" update="formAllProducts:dataGridAllProducts formAllProducts:messages">
+                                <f:attribute name="productEntityToAdd" value="#{productEntity}" />
+                            </p:commandButton>
 
-                    <p:column headerText="SKU Code" sortBy="#{productEntity.skuCode}" filterBy="#{productEntity.skuCode}" filterMatchMode="contains">
-                        <h:outputText value="#{productEntity.skuCode}" />
-                    </p:column>
-
-                    <p:column headerText="Product ID" sortBy="#{productEntity.productId}" filterBy="#{productEntity.productId}" filterMatchMode="contains">
-                        <h:outputText value="#{productEntity.productId}" />
-                    </p:column>                            
-
-                    <p:column headerText="Name" sortBy="#{productEntity.name}" filterBy="#{productEntity.name}" filterMatchMode="contains">
-                        <h:outputText value="#{productEntity.name}" />
-                    </p:column>
-
-                    <p:column headerText="Description" sortBy="#{productEntity.description}" filterBy="#{productEntity.description}" filterMatchMode="contains">
-                        <h:outputText value="#{productEntity.description}" />
-                    </p:column>
-
-                    <p:column headerText="Quantity on Hand" sortBy="#{productEntity.quantityOnHand}" filterBy="#{productEntity.quantityOnHand}" filterMatchMode="contains">
-                        <h:outputText value="#{productEntity.quantityOnHand}" />
-                    </p:column>
-
-                    <p:column headerText="Unit Price" sortBy="#{productEntity.unitPrice}" filterBy="#{productEntity.unitPrice}" filterMatchMode="contains" style="text-align: right;">
-                        <h:outputText value="#{productEntity.unitPrice}">
-                            <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
-                        </h:outputText>
-                    </p:column>
-
-                    <p:column headerText="Category" sortBy="#{productEntity.categoryEntity.name}" filterBy="#{productEntity.categoryEntity.name}" filterMatchMode="contains">
-                        <h:outputText value="#{productEntity.categoryEntity.name}" />
-                    </p:column>
-
-                    <p:column headerText="Action" >
-                        <p:commandButton icon="fa fa-shopping-cart" title="Add to Cart" actionListener="#{shoppingCartManagedBean.addProductToShoppingCart}" update="formAllProducts:dataTableAllProducts formAllProducts:messages">
-                            <f:attribute name="productEntityToAdd" value="#{productEntity}" />
-                        </p:commandButton>
-                    </p:column>
-
-                </p:dataTable>
-
-                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                </p:confirmDialog>
-
+                        </h:panelGrid>
+                    </p:panel>
+                </p:dataGrid>
             </h:form>
-
-
-
-        </h:panelGroup>
-
-        <h:panelGroup rendered="#{sessionScope.isLogin == true}">
-            <p:dataGrid var="productEntity" value="#{productManagementManagedBean.productEntities}" columns="3" layout="grid"
-                        rows="6" paginator="true" id="productEntities"
-                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                        rowsPerPageTemplate="6,12,16">
-
-                <p:panel header="#{productEntity.name}" style="text-align:center">
-                    <h:panelGrid columns="1" style="width:100%">
-
-                        <h:outputText value="#{productEntity.description}" />
-                        <h:outputText value="#{productEntity.unitPrice}" />
-                        <h:outputText value="#{productEntity.categoryEntity.name}" />
-
-                    </h:panelGrid>
-                </p:panel>
-            </p:dataGrid>
         </h:panelGroup>
     </ui:define>
 

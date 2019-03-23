@@ -4,6 +4,7 @@ import entity.SaleTransactionEntity;
 import entity.SaleTransactionLineItemEntity;
 import java.util.List;
 import util.exception.CreateNewSaleTransactionException;
+import util.exception.CustomerNotFoundException;
 import util.exception.SaleTransactionAlreadyVoidedRefundedException;
 import util.exception.SaleTransactionNotFoundException;
 import util.exception.StaffNotFoundException;
@@ -25,4 +26,6 @@ public interface SaleTransactionEntityControllerLocal
     void voidRefundSaleTransaction(Long saleTransactionId) throws SaleTransactionNotFoundException, SaleTransactionAlreadyVoidedRefundedException;
     
     void deleteSaleTransaction(SaleTransactionEntity saleTransactionEntity);
+
+    public SaleTransactionEntity createNewCustomerSaleTransaction(Long customerId, SaleTransactionEntity newSaleTransactionEntity) throws CustomerNotFoundException, CreateNewSaleTransactionException;
 }

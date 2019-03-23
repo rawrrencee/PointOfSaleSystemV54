@@ -6,8 +6,12 @@
 package jsf.managedbean;
 
 import ejb.session.stateless.CustomerEntityControllerLocal;
+import ejb.session.stateless.SaleTransactionEntityControllerLocal;
 import ejb.session.stateless.ShoppingCartControllerLocal;
+import entity.CustomerEntity;
 import entity.ProductEntity;
+import entity.SaleTransactionEntity;
+import entity.SaleTransactionLineItemEntity;
 import entity.ShoppingCartEntity;
 import entity.ShoppingCartLineEntity;
 import javax.inject.Named;
@@ -15,12 +19,16 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import util.exception.CheckoutCartException;
+import util.exception.CreateNewSaleTransactionException;
+import util.exception.CustomerNotFoundException;
 
 /**
  *
@@ -30,6 +38,9 @@ import javax.faces.event.ActionEvent;
 @SessionScoped
 public class ShoppingCartManagedBean implements Serializable {
 
+    @EJB(name = "SaleTransactionEntityControllerLocal")
+    private SaleTransactionEntityControllerLocal saleTransactionEntityControllerLocal;
+
     @EJB(name = "ShoppingCartControllerLocal")
     private ShoppingCartControllerLocal shoppingCartControllerLocal;
 
@@ -38,6 +49,12 @@ public class ShoppingCartManagedBean implements Serializable {
 
     private ShoppingCartEntity shoppingCartEntity;
     private List<ShoppingCartLineEntity> shoppingCartLineEntities;
+
+    private SaleTransactionEntity saleTransaction;
+    private List<SaleTransactionLineItemEntity> saleTransactionLineItems;
+    private SaleTransactionLineItemEntity saleTransactionLineItemEntity;
+    private Integer totalLineItem;
+    private Integer totalQuantity;
 
     private BigDecimal totalPrice;
 
@@ -94,10 +111,10 @@ public class ShoppingCartManagedBean implements Serializable {
 
     public void removeProductFromShoppingCart(ActionEvent event) {
         productEntityToRemove = (ProductEntity) event.getComponent().getAttributes().get("productEntityToRemove");
-        for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
-            if (shoppingCartLineEntity.getProductEntity().equals(productEntityToRemove)) {
-                Integer quantity = shoppingCartLineEntity.getQuantity();
-                shoppingCartLineEntities.remove(shoppingCartLineEntity);
+        for (int i = 0; i < shoppingCartLineEntities.size(); i++) {
+            if (shoppingCartLineEntities.get(i).getProductEntity().equals(productEntityToRemove)) {
+                Integer quantity = shoppingCartLineEntities.get(i).getQuantity();
+                shoppingCartLineEntities.remove(i);
                 totalPrice = totalPrice.subtract(productEntityToRemove.getUnitPrice().multiply(BigDecimal.valueOf(quantity)));
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product removed from cart", null));
                 return;
@@ -119,7 +136,7 @@ public class ShoppingCartManagedBean implements Serializable {
 
     public void decreaseProductQuantity(ActionEvent event) {
         productEntityToModify = (ProductEntity) event.getComponent().getAttributes().get("productEntityToModify");
-        for (int i =0; i < shoppingCartLineEntities.size(); i++) {
+        for (int i = 0; i < shoppingCartLineEntities.size(); i++) {
             if (shoppingCartLineEntities.get(i).getProductEntity().equals(productEntityToModify)) {
                 if (shoppingCartLineEntities.get(i).getQuantity() > 0) {
                     shoppingCartLineEntities.get(i).setQuantity(shoppingCartLineEntities.get(i).getQuantity() - 1);
@@ -134,6 +151,41 @@ public class ShoppingCartManagedBean implements Serializable {
                 }
                 return;
             }
+        }
+    }
+
+    public void checkoutShoppingCart(ActionEvent event) throws CheckoutCartException {
+        Boolean completed = false;
+        totalLineItem = 0;
+        totalQuantity = 0;
+        CustomerEntity currentCustomerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
+        saleTransaction = new SaleTransactionEntity();
+        for (int i = 0; i < shoppingCartLineEntities.size(); i++) {
+            ++totalLineItem;
+            totalQuantity += shoppingCartLineEntities.get(i).getQuantity();
+            ProductEntity currentProductEntity = shoppingCartLineEntities.get(i).getProductEntity();
+            BigDecimal subTotal = currentProductEntity.getUnitPrice().multiply(BigDecimal.valueOf(shoppingCartLineEntities.get(i).getQuantity()));
+            saleTransactionLineItemEntity = new SaleTransactionLineItemEntity(totalLineItem, currentProductEntity, shoppingCartLineEntities.get(i).getQuantity(), currentProductEntity.getUnitPrice(), subTotal);
+            saleTransaction.getSaleTransactionLineItemEntities().add(saleTransactionLineItemEntity);
+        }
+        try {
+            saleTransaction.setTransactionDateTime(new Date());
+            saleTransaction.setTotalAmount(totalPrice);
+            saleTransaction.setTotalQuantity(totalQuantity);
+            saleTransaction.setTotalLineItem(totalLineItem);
+            saleTransactionEntityControllerLocal.createNewCustomerSaleTransaction(currentCustomerEntity.getCustomerId(), saleTransaction);
+            completed = true;
+        } catch (CustomerNotFoundException ex) {
+            throw new CheckoutCartException("Customer not found: " + ex.getMessage());
+        } catch (CreateNewSaleTransactionException ex) {
+            throw new CheckoutCartException("Sale transaction creation error: " + ex.getMessage());
+        } catch (Exception ex) {
+            throw new CheckoutCartException("An error has occurred: " + ex.getMessage());
+        }
+        if (completed) {
+            shoppingCartEntity.getShoppingCartLineEntities().clear();
+            totalPrice = BigDecimal.ZERO;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Your sales transaction has been created.", null));
         }
     }
 
@@ -167,6 +219,62 @@ public class ShoppingCartManagedBean implements Serializable {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public SaleTransactionEntity getSaleTransaction() {
+        return saleTransaction;
+    }
+
+    public void setSaleTransaction(SaleTransactionEntity saleTransaction) {
+        this.saleTransaction = saleTransaction;
+    }
+
+    public ProductEntity getProductEntityToRemove() {
+        return productEntityToRemove;
+    }
+
+    public void setProductEntityToRemove(ProductEntity productEntityToRemove) {
+        this.productEntityToRemove = productEntityToRemove;
+    }
+
+    public ProductEntity getProductEntityToModify() {
+        return productEntityToModify;
+    }
+
+    public void setProductEntityToModify(ProductEntity productEntityToModify) {
+        this.productEntityToModify = productEntityToModify;
+    }
+
+    public Integer getTotalLineItem() {
+        return totalLineItem;
+    }
+
+    public void setTotalLineItem(Integer totalLineItem) {
+        this.totalLineItem = totalLineItem;
+    }
+
+    public List<SaleTransactionLineItemEntity> getSaleTransactionLineItems() {
+        return saleTransactionLineItems;
+    }
+
+    public void setSaleTransactionLineItems(List<SaleTransactionLineItemEntity> saleTransactionLineItems) {
+        this.saleTransactionLineItems = saleTransactionLineItems;
+    }
+
+    public SaleTransactionLineItemEntity getSaleTransactionLineItemEntity() {
+        return saleTransactionLineItemEntity;
+    }
+
+    public void setSaleTransactionLineItemEntity(SaleTransactionLineItemEntity saleTransactionLineItemEntity) {
+        this.saleTransactionLineItemEntity = saleTransactionLineItemEntity;
+    }
+
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Integer totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 
 }
