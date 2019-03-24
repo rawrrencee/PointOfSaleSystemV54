@@ -72,19 +72,19 @@ public class ShoppingCartManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
-        try {
-            Long customerId = ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity")).getCustomerId();
-            System.err.println("CustomerId retrieved: " + customerId);
-            ShoppingCartEntity shoppingCart = shoppingCartControllerLocal.retrieveShoppingCartByCustomerId(customerId);
-            System.err.println("ShoppingCartId retrieved: " + shoppingCart.getShoppingCartId());
-            setShoppingCartEntity(shoppingCart);
-            setShoppingCartLineEntities(new ArrayList<>(getShoppingCartEntity().getShoppingCartLineEntities()));
-        } catch (ShoppingCartNotFoundException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Shopping cart not found: " + ex.getMessage(), null));
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New shopping cart created", null));
-        } catch (Exception ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "(Line 68) An unknown error has occurred: " + ex.getMessage(), null));
-        }
+//        try {
+//            Long customerId = ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity")).getCustomerId();
+//            System.err.println("CustomerId retrieved: " + customerId);
+//            ShoppingCartEntity shoppingCart = shoppingCartControllerLocal.retrieveShoppingCartByCustomerId(customerId);
+//            System.err.println("ShoppingCartId retrieved: " + shoppingCart.getShoppingCartId());
+//            setShoppingCartEntity(shoppingCart);
+//            setShoppingCartLineEntities(new ArrayList<>(getShoppingCartEntity().getShoppingCartLineEntities()));
+//        } catch (ShoppingCartNotFoundException ex) {
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Shopping cart not found: " + ex.getMessage(), null));
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New shopping cart created", null));
+//        } catch (Exception ex) {
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "(Line 68) An unknown error has occurred: " + ex.getMessage(), null));
+//        }
     }
 
     public void addProductToShoppingCart(ActionEvent event) {
@@ -157,6 +157,7 @@ public class ShoppingCartManagedBean implements Serializable {
 
     public void checkoutShoppingCart(ActionEvent event) throws CheckoutCartException {
         Boolean completed = false;
+        Boolean sufficientQty = true;
         totalLineItem = 0;
         totalQuantity = 0;
         CustomerEntity currentCustomerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
@@ -179,10 +180,18 @@ public class ShoppingCartManagedBean implements Serializable {
         } catch (CustomerNotFoundException ex) {
             throw new CheckoutCartException("Customer not found: " + ex.getMessage());
         } catch (CreateNewSaleTransactionException ex) {
+            for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
+                ProductEntity productToCheck = shoppingCartLineEntity.getProductEntity();
+                if (productToCheck.getQuantityOnHand() < shoppingCartLineEntity.getQuantity()) {
+                    sufficientQty = false;
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "We do not have enough quantity of the product in stock. Your sales transaction was not processed.", null));
+                }
+            }
             throw new CheckoutCartException("Sale transaction creation error: " + ex.getMessage());
         } catch (Exception ex) {
             throw new CheckoutCartException("An error has occurred: " + ex.getMessage());
         }
+
         if (completed) {
             shoppingCartEntity.getShoppingCartLineEntities().clear();
             totalPrice = BigDecimal.ZERO;

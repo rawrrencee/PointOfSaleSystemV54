@@ -7,7 +7,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import util.enumeration.AccessRightEnum;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2019-03-24T20:10:00")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2019-03-24T21:16:11")
 @StaticMetamodel(StaffEntity.class)
 public class StaffEntity_ { 
 

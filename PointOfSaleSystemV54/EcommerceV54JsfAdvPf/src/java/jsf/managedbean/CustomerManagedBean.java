@@ -62,22 +62,22 @@ public class CustomerManagedBean {
     }
 
     public void logout(ActionEvent event) throws IOException {
-        Long customerId = ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity")).getCustomerId();
-        shoppingCartManagedBean.putShoppingCartIntoSession();
-        currentShoppingCartEntity = (ShoppingCartEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentShoppingCartEntity");
-        System.err.println("currentShoppingCartEntity has line number: " + currentShoppingCartEntity.getShoppingCartLineEntities().size());
-        for (int i = 0; i < currentShoppingCartEntity.getShoppingCartLineEntities().size(); i++) {
-            System.out.println("shoppingCartLine " + currentShoppingCartEntity.getShoppingCartLineEntities().get(i).getProductEntity().getName() + " / Qty: " + currentShoppingCartEntity.getShoppingCartLineEntities().get(i).getQuantity());
-        }
-        if (currentShoppingCartEntity.getShoppingCartLineEntities().size() > 0) {
-            try {
-                shoppingCartControllerLocal.createNewShoppingCart(customerId, currentShoppingCartEntity);
-            } catch (CreateNewShoppingCartException ex) {
-                System.err.println("An error has occurred while creating the shopping cart: " + ex.getMessage());
-            } catch (Exception e) {
-                System.err.println("An unexpected error has occurred while creating the shopping cart: " + e.getMessage());
-            }
-        }
+//        Long customerId = ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity")).getCustomerId();
+//        shoppingCartManagedBean.putShoppingCartIntoSession();
+//        currentShoppingCartEntity = (ShoppingCartEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentShoppingCartEntity");
+//        System.err.println("currentShoppingCartEntity has line number: " + currentShoppingCartEntity.getShoppingCartLineEntities().size());
+//        for (int i = 0; i < currentShoppingCartEntity.getShoppingCartLineEntities().size(); i++) {
+//            System.out.println("shoppingCartLine " + currentShoppingCartEntity.getShoppingCartLineEntities().get(i).getProductEntity().getName() + " / Qty: " + currentShoppingCartEntity.getShoppingCartLineEntities().get(i).getQuantity());
+//        }
+//        if (currentShoppingCartEntity.getShoppingCartLineEntities().size() > 0) {
+//            try {
+//                shoppingCartControllerLocal.createNewShoppingCart(customerId, currentShoppingCartEntity);
+//            } catch (CreateNewShoppingCartException ex) {
+//                System.err.println("An error has occurred while creating the shopping cart: " + ex.getMessage());
+//            } catch (Exception e) {
+//                System.err.println("An unexpected error has occurred while creating the shopping cart: " + e.getMessage());
+//            }
+//        }
         ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
         FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
     }
