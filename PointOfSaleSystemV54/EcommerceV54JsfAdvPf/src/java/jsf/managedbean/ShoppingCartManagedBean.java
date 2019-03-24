@@ -97,7 +97,8 @@ public class ShoppingCartManagedBean implements Serializable {
                 shoppingCartLineEntity.setQuantity(currentQty + 1);
                 containsProduct = true;
                 totalPrice = totalPrice.add(productEntityToAdd.getUnitPrice());
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product already added to cart, quantity increased", null));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, productEntityToAdd.getName() + " already added to cart, quantity increased", null));
+                refreshShoppingCart();
                 return;
             }
         }
@@ -105,7 +106,7 @@ public class ShoppingCartManagedBean implements Serializable {
             ShoppingCartLineEntity newShoppingCartLine = new ShoppingCartLineEntity(1, getProductEntityToAdd());
             getShoppingCartEntity().getShoppingCartLineEntities().add(newShoppingCartLine);
             totalPrice = totalPrice.add(productEntityToAdd.getUnitPrice());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product added to cart", null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, productEntityToAdd.getName() + " added to cart", null));
 
         }
     }
@@ -117,7 +118,8 @@ public class ShoppingCartManagedBean implements Serializable {
                 Integer quantity = shoppingCartLineEntities.get(i).getQuantity();
                 shoppingCartLineEntities.remove(i);
                 totalPrice = totalPrice.subtract(productEntityToRemove.getUnitPrice().multiply(BigDecimal.valueOf(quantity)));
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product removed from cart", null));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, productEntityToRemove.getName() + " removed from cart", null));
+                refreshShoppingCart();
                 return;
             }
         }
@@ -129,7 +131,8 @@ public class ShoppingCartManagedBean implements Serializable {
             if (shoppingCartLineEntity.getProductEntity().equals(productEntityToModify)) {
                 shoppingCartLineEntity.setQuantity(shoppingCartLineEntity.getQuantity() + 1);
                 totalPrice = totalPrice.add(productEntityToModify.getUnitPrice());
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product quantity increased", null));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, productEntityToModify.getName() + " quantity increased", null));
+                refreshShoppingCart();
                 return;
             }
         }
@@ -144,14 +147,25 @@ public class ShoppingCartManagedBean implements Serializable {
                     totalPrice = totalPrice.subtract(productEntityToModify.getUnitPrice());
                     if (shoppingCartLineEntities.get(i).getQuantity() == 0) {
                         shoppingCartLineEntities.remove(i);
+                        refreshShoppingCart();
                         return;
                     }
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Product quantity decreased", null));
+                    refreshShoppingCart();
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, productEntityToModify.getName() + " quantity decreased", null));
                 } else {
+                    refreshShoppingCart();
                     return;
                 }
                 return;
             }
+        }
+    }
+
+    public void refreshShoppingCart() {
+        totalPrice = BigDecimal.ZERO;
+        for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
+            ProductEntity currentProduct = shoppingCartLineEntity.getProductEntity();
+            totalPrice = totalPrice.add(currentProduct.getUnitPrice().multiply(BigDecimal.valueOf(shoppingCartLineEntity.getQuantity())));
         }
     }
 
@@ -162,6 +176,14 @@ public class ShoppingCartManagedBean implements Serializable {
         totalQuantity = 0;
         CustomerEntity currentCustomerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
         saleTransaction = new SaleTransactionEntity();
+        for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
+            ProductEntity productToCheck = shoppingCartLineEntity.getProductEntity();
+            if (productToCheck.getQuantityOnHand() < shoppingCartLineEntity.getQuantity()) {
+                sufficientQty = false;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "We do not have enough quantity of " + productToCheck.getName() + " in stock. Your sales transaction was not processed.", null));
+                return;
+            }
+        }
         for (int i = 0; i < shoppingCartLineEntities.size(); i++) {
             ++totalLineItem;
             totalQuantity += shoppingCartLineEntities.get(i).getQuantity();
@@ -180,18 +202,10 @@ public class ShoppingCartManagedBean implements Serializable {
         } catch (CustomerNotFoundException ex) {
             throw new CheckoutCartException("Customer not found: " + ex.getMessage());
         } catch (CreateNewSaleTransactionException ex) {
-            for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
-                ProductEntity productToCheck = shoppingCartLineEntity.getProductEntity();
-                if (productToCheck.getQuantityOnHand() < shoppingCartLineEntity.getQuantity()) {
-                    sufficientQty = false;
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "We do not have enough quantity of the product in stock. Your sales transaction was not processed.", null));
-                }
-            }
             throw new CheckoutCartException("Sale transaction creation error: " + ex.getMessage());
         } catch (Exception ex) {
-            throw new CheckoutCartException("An error has occurred: " + ex.getMessage());
+            throw new CheckoutCartException("An error has occurred: " + ex.getClass().getName() + " / " + ex.getMessage());
         }
-
         if (completed) {
             shoppingCartEntity.getShoppingCartLineEntities().clear();
             totalPrice = BigDecimal.ZERO;

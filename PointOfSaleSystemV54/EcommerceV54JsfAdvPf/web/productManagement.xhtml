@@ -18,7 +18,7 @@
                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                     rowsPerPageTemplate="6,12,16">
 
-                    <p:panel header="#{productEntity.name}" style="text-align:center">
+                    <p:panel header="#{productEntity.name}" style="text-align:center;">
                         <h:panelGrid columns="1" style="width:100%">
 
                             <h:outputText value="ID: #{productEntity.productId}" />
@@ -29,7 +29,7 @@
                             <h:outputText value="#{productEntity.categoryEntity.name}" />
                             <br/>
 
-                            <p:commandButton icon="fa fa-shopping-cart" value="Add to Cart" style="text-align: center; display: inline-block;" title="Add to Cart" actionListener="#{shoppingCartManagedBean.addProductToShoppingCart}" update="formAllProducts:dataGridAllProducts formAllProducts:messages">
+                            <p:commandButton icon="fa fa-shopping-cart" value="Add to Cart" style="text-align: center; display: inline-block;" title="Add to Cart" actionListener="#{shoppingCartManagedBean.addProductToShoppingCart}" update=":formAllProducts:dataGridAllProducts :formAllProducts:messages :menuBarForm">
                                 <f:attribute name="productEntityToAdd" value="#{productEntity}" />
                             </p:commandButton>
 

@@ -9,7 +9,6 @@
     <p:commandButton update='shoppingCartSidebar' value="Cart" icon="fa fa-shopping-cart" oncomplete="PF('shoppingCartSidebar').show()"></p:commandButton>
 
     <p:sidebar id="shoppingCartSidebar" widgetVar="shoppingCartSidebar" position="right" style="width: 25%; overflow-y: scroll;" baseZIndex="-1">
-        <p:growl id="cartMessages" redisplay="false"/>
         <h2 style="font-weight:normal">Shopping Cart</h2>
         <br/>
         <p:panelGrid id="shoppingCartProducts" styleClass="shoppingCartGrid">
@@ -30,7 +29,9 @@
                 </p:row>
                 <p:row>
                     <p:column id="quantityLabel" colspan="3">
-                        #{shoppingCartLineEntity.quantity} &nbsp;
+                        <p:inputText value="#{shoppingCartLineEntity.quantity}" style="max-width: 20%;"> 
+                            <p:ajax update=":menuBarForm:shoppingCartProducts :menuBarForm:totalAmountLabel" listener="#{shoppingCartManagedBean.refreshShoppingCart}"/>
+                        </p:inputText> &nbsp;
                         <p:commandButton icon="fa fa-plus" actionListener="#{shoppingCartManagedBean.increaseProductQuantity}" update=":menuBarForm:shoppingCartProducts :menuBarForm:totalAmountLabel">
                             <f:attribute name="productEntityToModify" value="#{shoppingCartLineEntity.productEntity}" />
                         </p:commandButton>
@@ -38,7 +39,7 @@
                             <f:attribute name="productEntityToModify" value="#{shoppingCartLineEntity.productEntity}" />
                         </p:commandButton>
                     </p:column>
-                    <p:column id="actionLabel" colspan="1" style="float: right;">
+                    <p:column id="actionLabel" colspan="1" >
                         <p:commandButton icon="fa fa-trash" title="Remove from Cart" actionListener="#{shoppingCartManagedBean.removeProductFromShoppingCart}" update=":menuBarForm:shoppingCartProducts :menuBarForm:totalAmountLabel">
                             <f:attribute name="productEntityToRemove" value="#{shoppingCartLineEntity.productEntity}" />
                         </p:commandButton>
@@ -66,7 +67,7 @@
             <p:confirm header="Checkout" message="Confirm checkout? Sales transaction will be created." icon="pi pi-exclamation-triangle" />
         </p:commandButton>
         <p:confirmDialog appendTo="menuBarForm" global="true" closeOnEscape="true" widgetVar="checkoutConfirm" showEffect="fade" hideEffect="fade">
-            <p:commandButton value="Yes" actionListener="#{shoppingCartManagedBean.checkoutShoppingCart}" styleClass="ui-confirmdialog-yes" update=":menuBarForm:shoppingCartProducts :menuBarForm:totalAmountLabel :menuBarForm:cartMessages"/>
+            <p:commandButton value="Yes" actionListener="#{shoppingCartManagedBean.checkoutShoppingCart}" styleClass="ui-confirmdialog-yes" update=":menuBarForm:messages :menuBarForm:shoppingCartProducts :menuBarForm:totalAmountLabel"/>
             <p:commandButton value="No" styleClass="ui-confirmdialog-no" />
         </p:confirmDialog>
     </p:sidebar>

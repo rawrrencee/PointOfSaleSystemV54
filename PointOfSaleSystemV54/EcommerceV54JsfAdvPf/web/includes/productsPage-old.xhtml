@@ -13,7 +13,7 @@
 
             <h:form id="formAllProducts">
 
-                <p:messages id="messages" redisplay="false" closable="true" />
+                <p:growl id="messages" redisplay="false"/>
 
                 <p:dataTable id="dataTableAllProducts" widgetVar="dataTableAllProducts" value="#{productManagementManagedBean.productEntities}" var="productEntity" rowKey="#{productEntity.productId}" rowIndexVar="row"
                              filteredValue="#{productManagementManagedBean.filteredProductEntities}"
@@ -57,7 +57,7 @@
                     </p:column>
 
                     <p:column headerText="Action" >
-                        <p:commandButton icon="fa fa-shopping-cart" title="Add to Cart" actionListener="#{shoppingCartManagedBean.addProductToShoppingCart}" update="formAllProducts:dataTableAllProducts formAllProducts:messages">
+                        <p:commandButton icon="fa fa-shopping-cart" title="Add to Cart" actionListener="#{shoppingCartManagedBean.addProductToShoppingCart}" update="formAllProducts:dataTableAllProducts formAllProducts:messages :menuBarForm">
                             <f:attribute name="productEntityToAdd" value="#{productEntity}" />
                         </p:commandButton>
                     </p:column>

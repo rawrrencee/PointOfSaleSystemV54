@@ -3,19 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/testPage.xhtml</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/src/java/jsf/managedbean/ShoppingCartManagedBean.java</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/src/java/jsf/managedbean/CustomerManagedBean.java</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/src/java/web/listener/WebApplicationListener.java</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/includes/shoppingCart.xhtml</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/includes/menubar.xhtml</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/src/java/jsf/managedbean/ProductManagementManagedBean.java</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/productManagement.xhtml</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/src/java/jsf/managedbean/SaleTransactionManagedBean.java</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/index.xhtml</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/template/defaultTemplate.xhtml</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/transactions.xhtml</file>
-            <file>file:/C:/Users/lawrence/Documents/IS3106/Labs/Lab_6/PointOfSaleSystemV54/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/lawre/Documents/NetBeansProjects/IS3106/Labs/Lab_6/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/includes/shoppingCart.xhtml</file>
+            <file>file:/C:/Users/lawre/Documents/NetBeansProjects/IS3106/Labs/Lab_6/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/productManagement.xhtml</file>
+            <file>file:/C:/Users/lawre/Documents/NetBeansProjects/IS3106/Labs/Lab_6/PointOfSaleSystemV54/EcommerceV54JsfAdvPf/web/includes/menubar.xhtml</file>
         </group>
     </open-files>
 </project-private>

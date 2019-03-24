@@ -10,12 +10,13 @@
         <h:form id="menuBarForm">
             <p:growl id="messages"/>
 
-            <p:menubar id="menuBar" rendered="#{sessionScope.isLogin == true}" style="border-style: none">
+            <p:menubar id="menuBar" rendered="#{sessionScope.isLogin == true}" style="border-style: none" toggleEvent="click">
 
                 <p:menuitem id="homeMenuItem" value="Home" outcome="/index" icon="fa fa-home" />
 
                 <p:submenu id="productsMenuItem" label="Products" icon="fa fa-th-list">
                     <p:menuitem id="viewAllProducts" value="View All" icon="fa fa-plus" outcome="/productManagement.xhtml" />
+                    <p:menuitem id="viewAllProductsOld" value="View All (Old)" icon="fa fa-plus" outcome="/includes/productsPage-old.xhtml" />
                 </p:submenu>
 
                 <f:facet id="menuBarOptions" name="options">
@@ -28,7 +29,7 @@
                 </f:facet>
             </p:menubar>
         </h:form>
-        
+
 
     </section>
 </ui:composition>
