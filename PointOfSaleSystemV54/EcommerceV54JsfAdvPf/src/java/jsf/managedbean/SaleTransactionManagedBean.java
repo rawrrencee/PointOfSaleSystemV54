@@ -17,8 +17,9 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Named;
+import util.exception.CustomerNotFoundException;
 
 /**
  *
@@ -40,13 +41,19 @@ public class SaleTransactionManagedBean implements Serializable {
     private CustomerEntity currentCustomerEntity;
     private List<SaleTransactionEntity> saleTransactionEntities;
 
+    private SaleTransactionEntity selectedSaleTransactionToView;
+
     public SaleTransactionManagedBean() {
     }
 
     @PostConstruct
     public void postConstruct() {
-        currentCustomerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
-        saleTransactionEntities = currentCustomerEntity.getSaleTransactionEntities();
+        Long currentCustomerEntityId = ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity")).getCustomerId();
+        try {
+            saleTransactionEntities = customerEntityControllerLocal.retrieveCustomerByCustomerId(currentCustomerEntityId).getSaleTransactionEntities();
+        } catch (CustomerNotFoundException ex) {
+            System.err.println("SaleTransactionManagedBean PostConstruct error. Customer not found: " + ex.getMessage());
+        }
     }
 
     public void viewSaleTransactionEntityDetails(ActionEvent event) throws IOException {
@@ -68,6 +75,14 @@ public class SaleTransactionManagedBean implements Serializable {
 
     public void setSaleTransactionEntities(List<SaleTransactionEntity> saleTransactionEntities) {
         this.saleTransactionEntities = saleTransactionEntities;
+    }
+
+    public SaleTransactionEntity getSelectedSaleTransactionToView() {
+        return selectedSaleTransactionToView;
+    }
+
+    public void setSelectedSaleTransactionToView(SaleTransactionEntity selectedSaleTransactionToView) {
+        this.selectedSaleTransactionToView = selectedSaleTransactionToView;
     }
 
 }

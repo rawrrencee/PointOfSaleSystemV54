@@ -39,6 +39,11 @@ public class ShoppingCartController implements ShoppingCartControllerRemote, Sho
     public ShoppingCartEntity createNewShoppingCart(Long customerId, ShoppingCartEntity newShoppingCart) throws CreateNewShoppingCartException {
         try {
             CustomerEntity customerEntity = customerEntityControllerLocal.retrieveCustomerByCustomerId(customerId);
+            System.err.println("retrieved customerEntity in createNewShoppingCart: " + customerEntity.getEmail());
+            if (customerEntity.getShoppingCartEntity() != null) {
+                updateShoppingCart(customerId, newShoppingCart);
+                return newShoppingCart;
+            }
             newShoppingCart.setCustomerEntity(customerEntity);
             em.persist(newShoppingCart);
             customerEntity.setShoppingCartEntity(newShoppingCart);
@@ -47,18 +52,18 @@ public class ShoppingCartController implements ShoppingCartControllerRemote, Sho
             if (ex.getCause() != null
                     && ex.getCause().getCause() != null
                     && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException")) {
+                System.err.println("PersistenceException at createNewShoppingCart: " + ex.getMessage());
                 try {
                     updateShoppingCart(customerId, newShoppingCart);
                 } catch (UpdateShoppingCartException e) {
                     throw new CreateNewShoppingCartException("An error has occurred when updating the shopping cart: " + e.getMessage());
                 }
             } else {
-                throw new CreateNewShoppingCartException("An unexpected error has occurred: " + ex.getMessage());
+                throw new CreateNewShoppingCartException("An unexpected error has occurred! during createNewShoppingCart in ShoppingCartController: " + ex.getMessage());
             }
         } catch (Exception ex) {
-            throw new CreateNewShoppingCartException("An unexpected error has occurred!" + ex.getMessage());
+            throw new CreateNewShoppingCartException("An unexpected error has occurred during createNewShoppingCart in ShoppingCartController" + ex.getMessage());
         }
-
         return newShoppingCart;
     }
 
@@ -67,14 +72,18 @@ public class ShoppingCartController implements ShoppingCartControllerRemote, Sho
         try {
             CustomerEntity customerEntity = customerEntityControllerLocal.retrieveCustomerByCustomerId(customerId);
             ShoppingCartEntity oldShoppingCart = customerEntity.getShoppingCartEntity();
-            em.remove(oldShoppingCart);
+//            for (int i = 0; i < oldShoppingCart.getShoppingCartLineEntities().size(); i++) {
+//                oldShoppingCart.getShoppingCartLineEntities().remove(i);
+//            }
+//            customerEntity.setShoppingCartEntity(null);
+//            em.remove(oldShoppingCart);
             customerEntity.setShoppingCartEntity(newShoppingCart);
             em.persist(newShoppingCart);
             em.flush();
         } catch (CustomerNotFoundException ex) {
             throw new UpdateShoppingCartException("Customer not found when updating shopping cart: " + ex.getMessage());
         } catch (Exception ex) {
-            throw new UpdateShoppingCartException("An unexpected error has occurred: " + ex.getMessage());
+            throw new UpdateShoppingCartException("An unexpected error has occurred during updateShoppingCart in ShoppingCartController: " + ex.getMessage());
         }
         return newShoppingCart;
     }
@@ -95,7 +104,7 @@ public class ShoppingCartController implements ShoppingCartControllerRemote, Sho
             throw new ShoppingCartNotFoundException("Shopping Cart ID " + shoppingCartId + " does not exist!");
         }
     }
-    
+
     @Override
     public ShoppingCartEntity retrieveShoppingCartByCustomerId(Long customerId) throws ShoppingCartNotFoundException {
         try {

@@ -29,6 +29,7 @@ import javax.faces.event.ActionEvent;
 import util.exception.CheckoutCartException;
 import util.exception.CreateNewSaleTransactionException;
 import util.exception.CustomerNotFoundException;
+import util.exception.ShoppingCartNotFoundException;
 
 /**
  *
@@ -71,19 +72,19 @@ public class ShoppingCartManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
-        //       try {
-        //           Long customerId = ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity")).getCustomerId();
-        //           System.err.println("CustomerId retrieved: " + customerId);
-        //           ShoppingCartEntity shoppingCart = shoppingCartControllerLocal.retrieveShoppingCartByCustomerId(customerId);
-        //           System.err.println("ShoppingCartId retrieved: " + shoppingCart.getShoppingCartId());
-        //           setShoppingCartEntity(shoppingCart);
-        //           setShoppingCartLineEntities(new ArrayList<>(getShoppingCartEntity().getShoppingCartLineEntities()));
-        //       } catch (ShoppingCartNotFoundException ex) {
-        //           FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Shopping cart not found: " + ex.getMessage(), null));
-        //           FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New shopping cart created", null));
-        //       } catch (Exception ex) {
-        //           FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "(Line 68) An unknown error has occurred: " + ex.getMessage(), null));
-        //       }
+        try {
+            Long customerId = ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity")).getCustomerId();
+            System.err.println("CustomerId retrieved: " + customerId);
+            ShoppingCartEntity shoppingCart = shoppingCartControllerLocal.retrieveShoppingCartByCustomerId(customerId);
+            System.err.println("ShoppingCartId retrieved: " + shoppingCart.getShoppingCartId());
+            setShoppingCartEntity(shoppingCart);
+            setShoppingCartLineEntities(new ArrayList<>(getShoppingCartEntity().getShoppingCartLineEntities()));
+        } catch (ShoppingCartNotFoundException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Shopping cart not found: " + ex.getMessage(), null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New shopping cart created", null));
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "(Line 68) An unknown error has occurred: " + ex.getMessage(), null));
+        }
     }
 
     public void addProductToShoppingCart(ActionEvent event) {
@@ -191,6 +192,11 @@ public class ShoppingCartManagedBean implements Serializable {
 
     public ShoppingCartEntity getShoppingCartEntity() {
         return shoppingCartEntity;
+    }
+
+    public void putShoppingCartIntoSession() {
+        shoppingCartEntity.getShoppingCartLineEntities().size();
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentShoppingCartEntity", shoppingCartEntity);
     }
 
     public void setShoppingCartEntity(ShoppingCartEntity shoppingCartEntity) {

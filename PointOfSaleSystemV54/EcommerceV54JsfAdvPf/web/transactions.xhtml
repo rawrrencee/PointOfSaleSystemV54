@@ -10,37 +10,119 @@
     <ui:define name="content">
         <h:panelGroup rendered="#{sessionScope.isLogin == true and saleTransactionManagedBean.saleTransactionEntities.size() != null}">
             <h:form id="formAllSaleTransactions">
-                <p:dataList var="saleTransactionEntity" 
+                <p:dataList var="saleTransactionEntity" id="saleTransactionDataList"
                             value="#{saleTransactionManagedBean.saleTransactionEntities}"
                             rows="12" paginator="true" paginatorPosition="bottom" rowsPerPageTemplate="6,12,16"
                             type="unordered" itemType="none"
                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-                    <p:outputPanel id="saleTransactionEntityDetails">
-                        <p:panelGrid style="text-align: left; width: 100%;" columnClasses="orderNumber, orderDate, orderQuantity, orderTotalAmount">
-                            <p:spacer/>
+                    <p:panelGrid style="text-align: right; width: 100%;" columnClasses="orderNumber, orderDate, orderQuantity, orderTotalAmount">
+                        <p:spacer/>
+                        <p:row style="border: none;">
+                            <p:column id="orderNumber" colspan="1" style="width: 10%;">
+                                <h:outputText value="Order Number" style="font-weight: lighter; font-size: smaller;"/><br/>
+                                <h:outputText value="#{saleTransactionEntity.saleTransactionId}" style="font-size: large; font-weight: bold;"/><br/>
+                            </p:column>
+                            <p:column id="orderDate" colspan="1" style="width: 40%;">
+                                <h:outputText value="Order Date" style="font-weight: lighter; font-size: smaller;"/><br/>
+                                <h:outputText value="#{saleTransactionEntity.transactionDateTime}" style="font-size: large; font-weight: bold;"/><br/>
+                            </p:column>
+                            <p:column id="orderQuantity" colspan="1" style="width: 10%;">
+                                <h:outputText value="#{saleTransactionEntity.totalLineItem} items"/>
+                            </p:column>
+                            <p:column id="orderTotalAmount" colspan="1" style="width: 20%;">
+                                <h:outputText value="Total Amount" style="font-weight: lighter; font-size: smaller;"/> &nbsp;
+                                <h:outputText value="#{saleTransactionEntity.totalAmount}" style="font-size: smaller; font-weight: bold;">
+                                    <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="orderAction" colspan="1" style="width: 20%; align-content: center;">
+                                <p:commandButton update="formViewSaleTransactions" oncomplete="PF('dialogViewSaleTransaction').show()" icon="fa fa-search" title="View Order Details">
+                                    <f:setPropertyActionListener value="#{saleTransactionEntity}" target="#{saleTransactionManagedBean.selectedSaleTransactionToView}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:separator/>
+                </p:dataList>
+            </h:form>
+
+            <h:form id="formViewSaleTransactions">
+                <p:dialog header="Order Number ##{saleTransactionManagedBean.selectedSaleTransactionToView.saleTransactionId}" 
+                          id="dialogViewSaleTransaction" widgetVar="dialogViewSaleTransaction" 
+                          appendTo="@(body)" resizable="false" closable="true" 
+                          closeOnEscape="true" modal="true" 
+                          style="max-width: 80%; max-height: 80%; min-width: 80% !important; overflow-y: auto;">
+                    <p:dataList var="saleTransactionLineEntity" id="saleTransactionLineEntityDataList"
+                                value="#{saleTransactionManagedBean.selectedSaleTransactionToView.saleTransactionLineItemEntities}"
+                                type="definition" style="width: 100%;" styleClass="datalist-noborder">
+                        <p:panelGrid style="text-align: left; width: 100%;">
                             <p:row style="border: none;">
-                                <p:column id="orderNumber" colspan="1" style="width:10%;">
-                                    <h:outputText value="Order Number" style="font-weight: lighter; font-size: smaller;"/><br/>
-                                    <h:outputText value="#{saleTransactionEntity.saleTransactionId}" style="font-size: large; font-weight: bold;"/><br/>
+                                <p:column colspan="4" sortBy="#{saleTransactionLineEntity.serialNumber}">
+                                    <h:outputText value="#" style="font-weight: lighter; font-size: smaller;" />
+                                    <h:outputText value="#{saleTransactionLineEntity.serialNumber}"/><br/>
                                 </p:column>
-                                <p:column id="orderDate" colspan="1" style="width:40%;">
-                                    <h:outputText value="Order Date" style="font-weight: lighter; font-size: smaller;"/><br/>
-                                    <h:outputText value="#{saleTransactionEntity.transactionDateTime}" style="font-size: large; font-weight: bold;"/><br/>
+                            </p:row>
+                            <p:row style="border: none;">
+                                <p:column colspan="2">
+                                    <h:outputText value="Name" style="font-weight: lighter; font-size: smaller;" /><br/>                           
+                                    <h:outputText value="#{saleTransactionLineEntity.productEntity.name}"/><br/>
                                 </p:column>
-                                <p:column id="orderQuantity" colspan="1" style="width:10%;">
-                                    <h:outputText value="#{saleTransactionEntity.totalLineItem} items"/>
+                                <p:column colspan="1">
+                                    <h:outputText value="Product ID" style="font-weight: lighter; font-size: smaller;" /><br/>
+                                    <h:outputText value="#{saleTransactionLineEntity.productEntity.productId}"/><br/>
                                 </p:column>
-                                <p:column id="orderTotalAmount" colspan="1" style="width:40%;">
-                                    <h:outputText value="Total Amount" style="font-weight: lighter; font-size: smaller;"/>
-                                    <h:outputText value="#{saleTransactionEntity.totalAmount}" style="font-size: smaller; font-weight: bold;">
+                                <p:column colspan="1">
+                                    <h:outputText value="SKU" style="font-weight: lighter; font-size: smaller;" /><br/>
+                                    <h:outputText value="#{saleTransactionLineEntity.productEntity.skuCode}"/><br/>
+                                </p:column>
+                            </p:row>
+                            <p:row style="text-align: left; border:none;">
+                                <p:column colspan="4">
+                                    <h:outputText value="Rating" style="font-weight: lighter; font-size: smaller;" /><br/>
+                                    <p:rating readonly="true" value="#{saleTransactionLineEntity.productEntity.productRating}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row style="border: none;">
+                                <p:column colspan="4">
+                                    <h:outputText value="Description" style="font-weight: lighter; font-size: smaller;" /><br/>
+                                    <h:outputText value="#{saleTransactionLineEntity.productEntity.description}"/><br/>
+                                </p:column>
+                            </p:row>
+                            <p:row style="text-align: left; border: none;">
+                                <p:column colspan="4">
+                                    <h:outputText value="Price" style="font-weight: lighter; font-size: smaller;" /><br/>
+                                    <h:outputText value="#{saleTransactionLineEntity.productEntity.unitPrice}">
                                         <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
-                                    </h:outputText>
+                                    </h:outputText><br/>
+                                </p:column>
+                            </p:row>
+                            <p:row style="border: none;">
+                                <p:column colspan="1">
+                                    <h:outputText value="Quantity" style="font-weight: lighter; font-size: smaller;" /><br/>
+                                    <h:outputText value="#{saleTransactionLineEntity.quantity}"/><br/>
+                                </p:column>
+                            </p:row>
+                            <p:separator/>
+                            <p:row style="border: none;">
+                                <p:column colspan="5" style="text-align: right;">
+                                    <h:outputText value="Subtotal" style="font-weight: lighter; font-size: smaller;" /><br/>
+                                    <h:outputText value="#{saleTransactionLineEntity.subTotal}"/><br/>
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                        <p:separator/>
-                    </p:outputPanel>
-                </p:dataList>
+                    </p:dataList>
+                    <p:separator/>
+                    <p:panelGrid style="width: 100%;">
+                        <p:row style="border: none; text-align: right;">
+                            <p:column colspan="1" style="text-align: right;">
+                                <h:outputText value="Total"/><br/>
+                                <h:outputText style="font-size: larger; font-weight: bold;" value="#{saleTransactionManagedBean.selectedSaleTransactionToView.totalAmount}">
+                                    <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
             </h:form>
         </h:panelGroup>
     </ui:define>
