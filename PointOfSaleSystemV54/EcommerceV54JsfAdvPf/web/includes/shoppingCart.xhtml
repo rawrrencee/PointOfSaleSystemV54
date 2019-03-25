@@ -66,8 +66,8 @@
                          onclick='PF("checkoutConfirm").show()'>
             <p:confirm header="Checkout" message="Confirm checkout? Sales transaction will be created." icon="pi pi-exclamation-triangle" />
         </p:commandButton>
-        <p:confirmDialog appendTo="menuBarForm" global="true" closeOnEscape="true" widgetVar="checkoutConfirm" showEffect="fade" hideEffect="fade">
-            <p:commandButton value="Yes" actionListener="#{shoppingCartManagedBean.checkoutShoppingCart}" styleClass="ui-confirmdialog-yes" update=":menuBarForm:messages :menuBarForm:shoppingCartProducts :menuBarForm:totalAmountLabel"/>
+        <p:confirmDialog appendTo="menuBarForm" global="true" closeOnEscape="true" widgetVar="checkoutConfirm" showEffect="fade" hideEffect="fade" rendered="#{!shoppingCartManagedBean.shoppingCartLineEntities.isEmpty()}">
+            <p:commandButton value="Yes" actionListener="#{shoppingCartManagedBean.checkoutShoppingCart}" styleClass="ui-confirmdialog-yes" update=":menuBarForm:messages :menuBarForm:shoppingCartProducts :menuBarForm:totalAmountLabel :menuBarForm"/>
             <p:commandButton value="No" styleClass="ui-confirmdialog-no" />
         </p:confirmDialog>
     </p:sidebar>

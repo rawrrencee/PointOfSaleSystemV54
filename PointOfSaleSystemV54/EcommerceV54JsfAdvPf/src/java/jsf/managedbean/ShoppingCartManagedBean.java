@@ -163,9 +163,16 @@ public class ShoppingCartManagedBean implements Serializable {
 
     public void refreshShoppingCart() {
         totalPrice = BigDecimal.ZERO;
+        totalQuantity = 0;
         for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
             ProductEntity currentProduct = shoppingCartLineEntity.getProductEntity();
+            totalQuantity += shoppingCartLineEntity.getQuantity();
             totalPrice = totalPrice.add(currentProduct.getUnitPrice().multiply(BigDecimal.valueOf(shoppingCartLineEntity.getQuantity())));
+        }
+        for (int i = 0; i < shoppingCartLineEntities.size(); i++) {
+            if (shoppingCartLineEntities.get(i).getQuantity() == 0) {
+                shoppingCartLineEntities.remove(i);
+            }
         }
     }
 
@@ -176,6 +183,10 @@ public class ShoppingCartManagedBean implements Serializable {
         totalQuantity = 0;
         CustomerEntity currentCustomerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
         saleTransaction = new SaleTransactionEntity();
+        if (shoppingCartLineEntities.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "0 products in cart. No sales transaction created.", null));
+            return;
+        }
         for (ShoppingCartLineEntity shoppingCartLineEntity : shoppingCartLineEntities) {
             ProductEntity productToCheck = shoppingCartLineEntity.getProductEntity();
             if (productToCheck.getQuantityOnHand() < shoppingCartLineEntity.getQuantity()) {

@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.CustomerEntity;
 import entity.ShoppingCartEntity;
+import entity.ShoppingCartLineEntity;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -72,11 +73,24 @@ public class ShoppingCartController implements ShoppingCartControllerRemote, Sho
         try {
             CustomerEntity customerEntity = customerEntityControllerLocal.retrieveCustomerByCustomerId(customerId);
             ShoppingCartEntity oldShoppingCart = customerEntity.getShoppingCartEntity();
+            
+            customerEntity.setShoppingCartEntity(null);
+            oldShoppingCart.setCustomerEntity(null);
+            
+            for(ShoppingCartLineEntity scle:oldShoppingCart.getShoppingCartLineEntities())
+            {
+                scle.setProductEntity(null);
+                em.remove(scle);
+            }
+            
+            oldShoppingCart.getShoppingCartLineEntities().clear();
+            
+            
 //            for (int i = 0; i < oldShoppingCart.getShoppingCartLineEntities().size(); i++) {
 //                oldShoppingCart.getShoppingCartLineEntities().remove(i);
 //            }
 //            customerEntity.setShoppingCartEntity(null);
-//            em.remove(oldShoppingCart);
+            em.remove(oldShoppingCart);
             customerEntity.setShoppingCartEntity(newShoppingCart);
             em.persist(newShoppingCart);
             em.flush();
